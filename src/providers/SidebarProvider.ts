@@ -41,7 +41,7 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
     const scriptUri = getUri(webview, this._extensionUri, ["webview-ui", "build", "assets", "index.js"]);
 
     const nonce = getNonce();
-    
+
     return /*html*/ `
       <!DOCTYPE html>
       <html lang="en">
@@ -53,7 +53,6 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
           <title>Hello World</title>
         </head>
         <body>
-          <p>test</p>
           <div id="root"></div>
           <script type="module" nonce="${nonce}" src="${scriptUri}"></script>
         </body>

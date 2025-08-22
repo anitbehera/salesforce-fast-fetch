@@ -93,7 +93,7 @@ function App() {
 
     return parts.map((part, index) =>
       regex.test(part) ? (
-        <span key={index} className="bg-yellow-400 text-black rounded px-0.5">
+        <span key={index} className="bg-orange-300 text-black rounded px-0.5">
           {part}
         </span>
       ) : (
@@ -104,7 +104,7 @@ function App() {
 
   return (
     <>
-      <main className="min-h-screen font-mono text-sm">
+      <main className="min-h-screen text-sm">
         {/* search metadata */}
         <div className="w-full px-2">
           <VSCodeTextField
@@ -167,11 +167,11 @@ function App() {
                         (metaDataItem: MetaDataItem) => (
                           <div
                             key={metaDataItem.id}
-                            className="flex items-center gap-2 pl-4 pr-6 py-1 relative group cursor-pointer"
+                            className="flex items-center gap-1 pl-2 pr-6 py-1 relative group cursor-pointer"
                           >
                             <div className="absolute inset-0 bg-blue-600/10 opacity-0 group-hover:opacity-100 transition-opacity duration-150"></div>
                             {/* <span className="codicon codicon-cloud-download relative z-10"></span> */}
-                            <div className="relative z-10 rounded hover:scale-110 transition-transform duration-150">
+                            <div className="relative z-10 rounded hover:scale-110 transition-transform duration-150 flex items-center justify-center">
                               <VSCodeButton appearance="icon">
                                 <span className="codicon codicon-cloud-download"></span>
                               </VSCodeButton>

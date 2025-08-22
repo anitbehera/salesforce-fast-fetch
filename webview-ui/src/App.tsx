@@ -139,7 +139,7 @@ function App() {
                   {/* Metadata type */}
                   <button
                     onClick={() => toggleSection(metaDataType.id)}
-                    className="w-full text-left flex items-center justify-between relative group py-1 pr-2 cursor-pointer"
+                    className="w-full text-left flex items-center justify-between relative group py-0.5 pr-2 cursor-pointer"
                   >
                     <div className="absolute inset-0 bg-blue-600/10 opacity-0 group-hover:opacity-100 transition-opacity duration-150"></div>
 
@@ -167,7 +167,7 @@ function App() {
                         (metaDataItem: MetaDataItem) => (
                           <div
                             key={metaDataItem.id}
-                            className="flex items-center gap-1 pl-2 pr-6 py-1 relative group cursor-pointer"
+                            className="flex items-center gap-1 pl-2 pr-6 py-0.5 relative group cursor-pointer"
                           >
                             <div className="absolute inset-0 bg-blue-600/10 opacity-0 group-hover:opacity-100 transition-opacity duration-150"></div>
                             {/* <span className="codicon codicon-cloud-download relative z-10"></span> */}

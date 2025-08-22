@@ -24,9 +24,15 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 
     // Handle messages from the webview
     webviewView.webview.onDidReceiveMessage(async (data) => {
-      switch (data.type) {
-        case 'myCommand': {
+      switch (data.command) {
+        case 'ready': {
           // Handle commands from webview
+          console.log("Ready");
+          break;
+        }
+        case 'hello': {
+          // Handle commands from webview
+          console.log("Hello from webview!");
           vscode.window.showInformationMessage('Command received!');
           break;
         }
@@ -35,6 +41,14 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
   }
 
   private _getHtmlForWebview(webview: vscode.Webview) {
+
+    const styleResetUri = webview.asWebviewUri(
+      vscode.Uri.joinPath(this._extensionUri, "media", "reset.css")
+    );
+    const styleVSCodeUri = webview.asWebviewUri(
+      vscode.Uri.joinPath(this._extensionUri, "media", "vscode.css")
+    );
+
     // The CSS file from the React build output
     const stylesUri = getUri(webview, this._extensionUri, ["webview-ui", "build", "assets", "index.css"]);
     // The JS file from the React build output
@@ -49,8 +63,10 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
           <meta charset="UTF-8" />
           <meta name="viewport" content="width=device-width, initial-scale=1.0" />
           <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src ${webview.cspSource}; script-src 'nonce-${nonce}';">
+          <link href="${styleResetUri}" rel="stylesheet">
+				  <link href="${styleVSCodeUri}" rel="stylesheet">
           <link rel="stylesheet" type="text/css" href="${stylesUri}">
-          <title>Hello World</title>
+          <title>Salesforce Fast Fetch</title>
         </head>
         <body>
           <div id="root"></div>

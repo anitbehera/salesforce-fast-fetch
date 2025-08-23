@@ -8,7 +8,9 @@ import { useExpandedSections } from "./hooks/useExpandedSections";
 
 function App() {
   const { searchTerm, setSearchTerm, filteredMetaDataTypes } = useSearch(componentsData.metaDataTypes);
-  const { expandedSections, toggleSection } = useExpandedSections(componentsData.metaDataTypes);
+  //const { expandedSections, toggleSection } = useExpandedSections(componentsData.metaDataTypes);
+  const { expandedSections, toggleSection } = useExpandedSections(componentsData.metaDataTypes, filteredMetaDataTypes, searchTerm);
+
 
   useEffect(() => {
     vscode.postMessage({

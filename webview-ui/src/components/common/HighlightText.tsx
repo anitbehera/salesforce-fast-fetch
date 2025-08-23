@@ -16,7 +16,7 @@ const HighlightText = ({ text, searchTerm }: HighlightTextProps) => {
     <>
       {parts.map((part, index) =>
         regex.test(part) ? (
-          <span key={index} className="bg-orange-300 text-black rounded px-0.5">
+          <span key={index} className="bg-amber-600 text-black px-0.5">
             {part}
           </span>
         ) : (

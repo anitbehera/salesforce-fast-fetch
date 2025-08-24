@@ -61,7 +61,7 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
           <meta name="viewport" content="width=device-width, initial-scale=1.0" />
           <meta http-equiv="Content-Security-Policy" content="img-src https: data:; style-src 'unsafe-inline' ${webview.cspSource}; script-src 'nonce-${nonce}';">
 
-          <link href="${codiconsUri}" rel="stylesheet" />
+          <link href="${codiconsUri}" rel="stylesheet" id="vscode-codicon-stylesheet" />
 
           <link href="${styleResetUri}" rel="stylesheet">
 				  <link href="${styleVSCodeUri}" rel="stylesheet">

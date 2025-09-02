@@ -5,7 +5,6 @@ interface Props {
 
 function SearchBar({ searchTerm, onSearch }: Props) {
   const handleInput = (e: React.FormEvent<HTMLElement>) => {
-    // use currentTarget so we always read the host <vscode-textfield>
     const value = (e.currentTarget as unknown as { value?: string }).value ?? "";
     onSearch(value);
   };

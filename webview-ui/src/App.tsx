@@ -14,9 +14,11 @@ import "@vscode-elements/elements/dist/vscode-checkbox";
 import "@vscode-elements/elements/dist/vscode-badge";
 
 import type { VscodeMultiSelect } from "@vscode-elements/elements/dist/vscode-multi-select";
+import type { VscodeTree } from "@vscode-elements/elements/dist/vscode-tree";
 
 import MetadataTypeSelect from "./components/MetadataTypeSelect/MetadataTypeSelect";
 import SearchBar from "./components/SearchBar/SearchBar";
+import MetadataTree from "./components/MetadataTree/MetadataTree";
 
 function App() {
   const [metadataTypes, setMetadataTypes] = useState<MetadataType[]>([]);
@@ -28,6 +30,7 @@ function App() {
   const [searchTerm, setSearchTerm] = useState("");
 
   const multiSelectRef = useRef<VscodeMultiSelect>(null);
+  const treeRef = useRef<VscodeTree | null>(null);
 
   useEffect(() => {
     // SEND 'ready' MESSAGE TO GET PRE-FETCHED METADATA
@@ -129,6 +132,11 @@ function App() {
 
       <SearchBar searchTerm={searchTerm} onSearch={setSearchTerm} />
 
+      <MetadataTree
+        metadataTypes={metadataTypes}
+        searchTerm={searchTerm}
+        treeRef={treeRef}
+      />
     </main>
   );
 }

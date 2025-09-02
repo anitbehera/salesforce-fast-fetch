@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { motion, AnimatePresence } from "motion/react";
 import { vscode } from "./utils/vscode";
 
 import "@vscode-elements/elements/dist/vscode-multi-select";
@@ -139,29 +140,47 @@ function App() {
 
   return (
     <main className="min-h-screen text-sm bg-[var(--vscode-sideBar-background)]">
-      {isInitializing ? (
-        <Initializing />
-      ) : (
-        <>
-          <MetadataTypeSelect
-            metadataTypes={metadataTypes}
-            multiSelectRef={multiSelectRef}
-            fetching={fetching}
-            selectedMetadataTypes={selectedMetadataTypes}
-            onSelectionChange={handleMetadataTypeChange}
-          />
+      <AnimatePresence mode="wait">
+        {isInitializing ? (
+          <motion.div
+            key="initializing"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
+            className="flex items-center justify-center h-full"
+          >
+            <Initializing />
+          </motion.div>
+        ) : (
+          <motion.div
+            key="app-content"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
+          >
+            <MetadataTypeSelect
+              metadataTypes={metadataTypes}
+              multiSelectRef={multiSelectRef}
+              fetching={fetching}
+              selectedMetadataTypes={selectedMetadataTypes}
+              onSelectionChange={handleMetadataTypeChange}
+            />
 
-          <SearchBar searchTerm={searchTerm} onSearch={setSearchTerm} />
+            <SearchBar searchTerm={searchTerm} onSearch={setSearchTerm} />
 
-          <MetadataTree
-            metadataTypes={metadataTypes}
-            searchTerm={searchTerm}
-            treeRef={treeRef}
-          />
-        </>
-      )}
+            <MetadataTree
+              metadataTypes={metadataTypes}
+              searchTerm={searchTerm}
+              treeRef={treeRef}
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
     </main>
   );
+
 }
 
 export default App;

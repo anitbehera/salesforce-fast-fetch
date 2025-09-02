@@ -1,32 +1,130 @@
-import { useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 import { vscode } from "./utils/vscode";
-import SearchInput from "./components/SearchInput/SearchInput";
-import MetadataType from "./components/MetadataType/MetadataType";
-import { componentsData } from "./data/fakeData";
-import { useSearch } from "./hooks/useSearch";
-import { useExpandedSections } from "./hooks/useExpandedSections";
+import type { MetadataType } from "./types/metadata";
+
+import "@vscode-elements/elements/dist/vscode-multi-select";
+import "@vscode-elements/elements/dist/vscode-option";
+import "@vscode-elements/elements/dist/vscode-textfield";
+import "@vscode-elements/elements/dist/vscode-icon";
+import "@vscode-elements/elements/dist/vscode-tree";
+import "@vscode-elements/elements/dist/vscode-tree-item";
+import "@vscode-elements/elements/dist/vscode-button";
+import "@vscode-elements/elements/dist/vscode-toolbar-button";
+import "@vscode-elements/elements/dist/vscode-checkbox";
+import "@vscode-elements/elements/dist/vscode-badge";
+
+import type { VscodeMultiSelect } from "@vscode-elements/elements/dist/vscode-multi-select";
+
+import MetadataTypeSelect from "./components/MetadataTypeSelect/MetadataTypeSelect";
 
 function App() {
-  const { searchTerm, setSearchTerm, filteredMetaDataTypes } = useSearch(componentsData.metaDataTypes);
-  //const { expandedSections, toggleSection } = useExpandedSections(componentsData.metaDataTypes);
-  const { expandedSections, toggleSection } = useExpandedSections(componentsData.metaDataTypes, filteredMetaDataTypes, searchTerm);
+  const [metadataTypes, setMetadataTypes] = useState<MetadataType[]>([]);
+  const [selectedMetadataTypes, setSelectedMetadataTypes] = useState<string[]>([]);
 
+  const [loading, setLoading] = useState(false); // Start with loading false
+  // const [loadingMessage, setLoadingMessage] = useState("Initializing...");
+  // const [error, setError] = useState("");
+
+  const multiSelectRef = useRef<VscodeMultiSelect>(null);
 
   useEffect(() => {
+    // SEND 'ready' MESSAGE TO GET PRE-FETCHED METADATA
     vscode.postMessage({
       command: "ready",
     });
+    // Listen for messages from extension
+    window.addEventListener("message", handleMessage);
+    return () => {
+      window.removeEventListener("message", handleMessage);
+    };
   }, []);
 
+
+  const handleMetadataTypeChange = (newSelection: string[], selectedType?: string, deselectedType?: string) => {
+    setLoading(true);
+    setSelectedMetadataTypes(newSelection);
+    vscode.postMessage({
+      command: "loadMetadataComponents",
+      type: selectedType ? "selected" : "deselected",
+      value: selectedType ?? deselectedType,
+    });
+  };
+
+  const handleMessage = (event: MessageEvent) => {
+    const message = event.data;
+
+    switch (message.type) {
+      case "showLoading":
+        // setLoading(true);
+        // setLoadingMessage(message.message);
+        // setError('');
+        break;
+
+      case "showError":
+        // setLoading(false);
+        // setError(message.message);
+        break;
+
+      case "metadataTypes": { // RECEIVE PRE-FETCHED METADATA FROM EXTENSION
+        setMetadataTypes(message.metadataTypes);
+        const selectedXmlNames = message.metadataTypes
+          .filter((mt: MetadataType) => mt.selected)
+          .map((mt: MetadataType) => mt.xmlName);
+        setSelectedMetadataTypes((prev) => {
+          if (prev.length === 0) {
+            return selectedXmlNames;
+          }
+          return prev;
+        });
+        setLoading(false);
+        // setError('');
+        // setLoadingMessage('');
+        break;
+      }
+
+      case "metadataTypesLoaded":
+        // RECEIVE PRE-FETCHED METADATA FROM EXTENSION
+        setMetadataTypes(message.data);
+        setLoading(false);
+        // setError('');
+        // setLoadingMessage('');
+        break;
+
+      case "componentsLoaded":
+        console.log(
+          `Loaded components for ${message.metadataType}:`,
+          message.data.length
+        );
+        break;
+
+      case "retrieveSuccess":
+      case "retrieveError":
+      case "bulkRetrieveSuccess":
+        break;
+    }
+  };
+
+
+  // if (error) {
+  //   return (
+  //     <div className="min-h-screen flex items-center justify-center bg-[var(--vscode-sideBar-background)] text-[var(--vscode-sideBar-foreground)]">
+  //       <div className="text-center">
+  //         <p className="text-red-500">Error: {error}</p>
+  //       </div>
+  //     </div>
+  //   );
+  // }
+
   return (
-    <main className="min-h-screen text-sm">
-      <SearchInput searchTerm={searchTerm} onSearchChange={setSearchTerm} />
-      <MetadataType
-        filteredMetaDataTypes={filteredMetaDataTypes}
-        expandedSections={expandedSections}
-        onToggleSection={toggleSection}
-        searchTerm={searchTerm}
+    <main className="min-h-screen text-sm bg-[var(--vscode-sideBar-background)]">
+      <MetadataTypeSelect
+        metadataTypes={metadataTypes}
+        multiSelectRef={multiSelectRef}
+        loading={loading}
+        selectedMetadataTypes={selectedMetadataTypes}
+        onSelectionChange={handleMetadataTypeChange}
       />
+
     </main>
   );
 }

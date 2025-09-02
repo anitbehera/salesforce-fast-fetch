@@ -110,6 +110,22 @@ function App() {
   };
 
 
+  useEffect(() => {
+    const tree = treeRef.current;
+    if (!tree) return;
+
+    const trimmed = searchTerm.trim();
+    const raf = requestAnimationFrame(() => {
+      if (trimmed === "") {
+        tree.collapseAll();
+      } else {
+        tree.expandAll();
+      }
+    });
+
+    return () => cancelAnimationFrame(raf);
+  }, [searchTerm]);
+
   // if (error) {
   //   return (
   //     <div className="min-h-screen flex items-center justify-center bg-[var(--vscode-sideBar-background)] text-[var(--vscode-sideBar-foreground)]">

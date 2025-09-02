@@ -59,6 +59,7 @@ function MetadataTypeSelect({
     <div className="w-full px-2 pt-1 flex items-center gap-2">
       <vscode-multi-select
         ref={multiSelectRef}
+        key={metadataTypes.map(t => t.xmlName + t.selected).join(',')}
         className="flex-1"
         id="metadata-type-select"
         combobox

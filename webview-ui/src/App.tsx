@@ -76,7 +76,7 @@ function App() {
           .filter((mt: MetadataType) => mt.selected)
           .map((mt: MetadataType) => mt.xmlName);
         setSelectedMetadataTypes((prev) => {
-          if (prev.length === 0) {
+          if (prev.length === 0 || message.orgSwitch) {
             return selectedXmlNames;
           }
           return prev;

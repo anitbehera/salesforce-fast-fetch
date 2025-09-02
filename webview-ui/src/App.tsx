@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from "react";
 import { vscode } from "./utils/vscode";
-import type { MetadataType } from "./types/metadata";
 
 import "@vscode-elements/elements/dist/vscode-multi-select";
 import "@vscode-elements/elements/dist/vscode-option";
@@ -15,17 +14,18 @@ import "@vscode-elements/elements/dist/vscode-badge";
 
 import type { VscodeMultiSelect } from "@vscode-elements/elements/dist/vscode-multi-select";
 import type { VscodeTree } from "@vscode-elements/elements/dist/vscode-tree";
+import type { MetadataType } from "./types/metadata";
 
 import MetadataTypeSelect from "./components/MetadataTypeSelect/MetadataTypeSelect";
 import SearchBar from "./components/SearchBar/SearchBar";
 import MetadataTree from "./components/MetadataTree/MetadataTree";
+import Initializing from "./components/common/Initializing/Initializing";
 
 function App() {
   const [metadataTypes, setMetadataTypes] = useState<MetadataType[]>([]);
   const [selectedMetadataTypes, setSelectedMetadataTypes] = useState<string[]>([]);
-
-  const [loading, setLoading] = useState(false); // Start with loading false
-  // const [loadingMessage, setLoadingMessage] = useState("Initializing...");
+  const [isInitializing, setIsInitializing] = useState(true);
+  const [fetching, setFetching] = useState(false);
   // const [error, setError] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
 
@@ -46,7 +46,7 @@ function App() {
 
 
   const handleMetadataTypeChange = (newSelection: string[], selectedType?: string, deselectedType?: string) => {
-    setLoading(true);
+    setFetching(true);
     setSelectedMetadataTypes(newSelection);
     vscode.postMessage({
       command: "loadMetadataComponents",
@@ -61,7 +61,6 @@ function App() {
     switch (message.type) {
       case "showLoading":
         // setLoading(true);
-        // setLoadingMessage(message.message);
         // setError('');
         break;
 
@@ -69,8 +68,12 @@ function App() {
         // setLoading(false);
         // setError(message.message);
         break;
+      case "orgSwitch":
+        setIsInitializing(true);
+        // setError(message.message);
+        break;
 
-      case "metadataTypes": { // RECEIVE PRE-FETCHED METADATA FROM EXTENSION
+      case "metadataTypes": {
         setMetadataTypes(message.metadataTypes);
         const selectedXmlNames = message.metadataTypes
           .filter((mt: MetadataType) => mt.selected)
@@ -81,18 +84,16 @@ function App() {
           }
           return prev;
         });
-        setLoading(false);
+        setIsInitializing(false);
+        setFetching(false);
         // setError('');
-        // setLoadingMessage('');
         break;
       }
 
       case "metadataTypesLoaded":
-        // RECEIVE PRE-FETCHED METADATA FROM EXTENSION
         setMetadataTypes(message.data);
-        setLoading(false);
+        setFetching(false);
         // setError('');
-        // setLoadingMessage('');
         break;
 
       case "componentsLoaded":
@@ -138,21 +139,27 @@ function App() {
 
   return (
     <main className="min-h-screen text-sm bg-[var(--vscode-sideBar-background)]">
-      <MetadataTypeSelect
-        metadataTypes={metadataTypes}
-        multiSelectRef={multiSelectRef}
-        loading={loading}
-        selectedMetadataTypes={selectedMetadataTypes}
-        onSelectionChange={handleMetadataTypeChange}
-      />
+      {isInitializing ? (
+        <Initializing />
+      ) : (
+        <>
+          <MetadataTypeSelect
+            metadataTypes={metadataTypes}
+            multiSelectRef={multiSelectRef}
+            fetching={fetching}
+            selectedMetadataTypes={selectedMetadataTypes}
+            onSelectionChange={handleMetadataTypeChange}
+          />
 
-      <SearchBar searchTerm={searchTerm} onSearch={setSearchTerm} />
+          <SearchBar searchTerm={searchTerm} onSearch={setSearchTerm} />
 
-      <MetadataTree
-        metadataTypes={metadataTypes}
-        searchTerm={searchTerm}
-        treeRef={treeRef}
-      />
+          <MetadataTree
+            metadataTypes={metadataTypes}
+            searchTerm={searchTerm}
+            treeRef={treeRef}
+          />
+        </>
+      )}
     </main>
   );
 }

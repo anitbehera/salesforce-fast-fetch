@@ -8,7 +8,7 @@ import { vscode } from "../../utils/vscode";
 interface Props {
   metadataTypes: MetadataType[];
   multiSelectRef: RefObject<VscodeMultiSelect | null>;
-  loading: boolean;
+  fetching: boolean;
   selectedMetadataTypes: string[];
   onSelectionChange: (newSelection: string[], selectedType?: string, deselectedType?: string) => void;
 }
@@ -16,7 +16,7 @@ interface Props {
 function MetadataTypeSelect({
   metadataTypes,
   multiSelectRef,
-  loading,
+  fetching,
   selectedMetadataTypes,
   onSelectionChange,
 }: Props) {
@@ -84,7 +84,7 @@ function MetadataTypeSelect({
           onClick={clearSelection}
         ></vscode-button> */}
 
-      {loading ? (
+      {fetching ? (
         <ProgressRing />
       ) : (
         <vscode-button

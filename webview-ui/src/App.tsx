@@ -16,6 +16,7 @@ import "@vscode-elements/elements/dist/vscode-badge";
 import type { VscodeMultiSelect } from "@vscode-elements/elements/dist/vscode-multi-select";
 
 import MetadataTypeSelect from "./components/MetadataTypeSelect/MetadataTypeSelect";
+import SearchBar from "./components/SearchBar/SearchBar";
 
 function App() {
   const [metadataTypes, setMetadataTypes] = useState<MetadataType[]>([]);
@@ -24,6 +25,7 @@ function App() {
   const [loading, setLoading] = useState(false); // Start with loading false
   // const [loadingMessage, setLoadingMessage] = useState("Initializing...");
   // const [error, setError] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
 
   const multiSelectRef = useRef<VscodeMultiSelect>(null);
 
@@ -124,6 +126,8 @@ function App() {
         selectedMetadataTypes={selectedMetadataTypes}
         onSelectionChange={handleMetadataTypeChange}
       />
+
+      <SearchBar searchTerm={searchTerm} onSearch={setSearchTerm} />
 
     </main>
   );

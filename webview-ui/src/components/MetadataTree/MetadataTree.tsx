@@ -1,7 +1,9 @@
-import { type RefObject } from "react";
-import type { MetadataType } from "../../types/metadata";
+import { useEffect, type RefObject } from "react";
+import type { MetadataComponent, MetadataType } from "../../types/metadata";
 import type { VscodeTree } from "@vscode-elements/elements/dist/vscode-tree";
 import { useShadowEventDelegation } from "../../hooks/useShadowEventDelegation";
+import { TreeItemTooltip } from "../common/TreeItemTooltip/TreeItemTooltip";
+import { useTooltip } from "../../hooks/useTooltip";
 
 interface Props {
   metadataTypes: MetadataType[];
@@ -10,6 +12,15 @@ interface Props {
 }
 
 function MetadataTree({ metadataTypes, searchTerm, treeRef }: Props) {
+
+    const { hovered: hoveredComponent, attach, TooltipPortal } = useTooltip<MetadataComponent>();
+  
+    useEffect(() => {
+      attach("vscode-tree-item", (el: HTMLElement): MetadataComponent | null => {
+        const raw = el.getAttribute("data-component");
+        return raw ? (JSON.parse(raw) as MetadataComponent) : null;
+      });
+    }, [attach]);
     
   const handleToolbarClick = (componentName: string) => {
     console.log("clicked", componentName);
@@ -81,7 +92,16 @@ function MetadataTree({ metadataTypes, searchTerm, treeRef }: Props) {
             );
           })}
       </vscode-tree>
-
+      <TooltipPortal>
+        {hoveredComponent && (
+          <TreeItemTooltip
+            createdByName={hoveredComponent.createdByName}
+            createdDate={hoveredComponent.createdDate}
+            lastModifiedByName={hoveredComponent.lastModifiedByName}
+            lastModifiedDate={hoveredComponent.lastModifiedDate}
+          />
+        )}
+      </TooltipPortal>
     </div>
     
   );

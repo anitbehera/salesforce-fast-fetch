@@ -14,7 +14,7 @@
     "theme": "light"
   },
   "version": "0.0.1",
-  "publisher": "Anit Behera",
+  "publisher": "anitb",
   "license": "MIT",
   "engines": {
     "vscode": "^1.103.0"

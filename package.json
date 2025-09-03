@@ -2,6 +2,17 @@
   "name": "salesforce-fast-fetch",
   "displayName": "Salesforce Fast Fetch",
   "description": "Search and download Salesforce & Omnistudio components with ease!",
+  "bugs": {
+    "url": "https://github.com/anitbehera/salesforce-fast-fetch/issues"
+  },
+  "repository": {
+    "url": "https://github.com/anitbehera/salesforce-fast-fetch"
+  },
+  "icon": "media/FastFetch.png",
+  "galleryBanner": {
+    "color": "#ECECEC",
+    "theme": "light"
+  },
   "version": "0.0.1",
   "publisher": "Anit Behera",
   "license": "MIT",
@@ -19,7 +30,7 @@
         {
           "id": "salesforceFastFetch",
           "title": "Salesforce Fast Fetch",
-          "icon": "$(cloud-download)"
+          "icon": "media/fast-fetch.svg"
         }
       ]
     },
@@ -33,14 +44,7 @@
           "contextualTitle": "Salesforce Fast Fetch Sidebar"
         }
       ]
-    },
-    "commands": [
-      {
-        "command": "salesforceFastFetch.helloWorld",
-        "category": "Salesforce Fast Fetch",
-        "title": "Hello World"
-      }
-    ]
+    }
   },
   "scripts": {
     "install:all": "npm install && cd webview-ui && npm install",

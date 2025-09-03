@@ -40,7 +40,7 @@
           "type": "webview",
           "id": "salesforceFastFetch.sidebar",
           "name": "Search Components",
-          "icon": "$(cloud-download)",
+          "icon": "media/fast-fetch.svg",
           "contextualTitle": "Salesforce Fast Fetch Sidebar"
         }
       ]

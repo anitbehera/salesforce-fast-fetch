@@ -231,7 +231,7 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
           <link rel="stylesheet" type="text/css" href="${stylesUri}">
           <title>Salesforce Fast Fetch</title>
         </head>
-        <body>
+        <body style="margin: 0; padding: 0;">
           <div id="root"></div>
           <script type="module" nonce="${nonce}" src="${scriptUri}"></script>
         </body>

@@ -24,7 +24,9 @@ import Initializing from "./components/common/Initializing/Initializing";
 
 function App() {
   const [metadataTypes, setMetadataTypes] = useState<MetadataType[]>([]);
-  const [selectedMetadataTypes, setSelectedMetadataTypes] = useState<string[]>([]);
+  const [selectedMetadataTypes, setSelectedMetadataTypes] = useState<string[]>(
+    []
+  );
   const [isInitializing, setIsInitializing] = useState(true);
   const [fetching, setFetching] = useState(false);
   // const [error, setError] = useState("");
@@ -45,8 +47,11 @@ function App() {
     };
   }, []);
 
-
-  const handleMetadataTypeChange = (newSelection: string[], selectedType?: string, deselectedType?: string) => {
+  const handleMetadataTypeChange = (
+    newSelection: string[],
+    selectedType?: string,
+    deselectedType?: string
+  ) => {
     setFetching(true);
     setSelectedMetadataTypes(newSelection);
     vscode.postMessage({
@@ -61,11 +66,13 @@ function App() {
 
     switch (message.type) {
       case "showLoading":
+        //TODO
         // setLoading(true);
         // setError('');
         break;
 
       case "showError":
+        //TODO
         // setLoading(false);
         // setError(message.message);
         break;
@@ -103,14 +110,8 @@ function App() {
           message.data.length
         );
         break;
-
-      case "retrieveSuccess":
-      case "retrieveError":
-      case "bulkRetrieveSuccess":
-        break;
     }
   };
-
 
   useEffect(() => {
     const tree = treeRef.current;
@@ -164,7 +165,9 @@ function App() {
               metadataTypes={metadataTypes}
               multiSelectRef={multiSelectRef}
               fetching={fetching}
+              setFetching={setFetching}
               selectedMetadataTypes={selectedMetadataTypes}
+              setSelectedMetadataTypes={setSelectedMetadataTypes}
               onSelectionChange={handleMetadataTypeChange}
             />
 
@@ -180,7 +183,6 @@ function App() {
       </AnimatePresence>
     </main>
   );
-
 }
 
 export default App;

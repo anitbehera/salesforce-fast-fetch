@@ -17,17 +17,17 @@
     "viewsContainers": {
       "activitybar": [
         {
-          "id": "fastFetch",
+          "id": "salesforceFastFetch",
           "title": "Salesforce Fast Fetch",
           "icon": "$(cloud-download)"
         }
       ]
     },
     "views": {
-      "fastFetch": [
+      "salesforceFastFetch": [
         {
           "type": "webview",
-          "id": "fastFetch.sidebar",
+          "id": "salesforceFastFetch.sidebar",
           "name": "Search Components",
           "icon": "$(cloud-download)",
           "contextualTitle": "Salesforce Fast Fetch Sidebar"
@@ -36,7 +36,7 @@
     },
     "commands": [
       {
-        "command": "salesforce-fast-fetch.helloWorld",
+        "command": "salesforceFastFetch.helloWorld",
         "category": "Salesforce Fast Fetch",
         "title": "Hello World"
       }
@@ -71,6 +71,7 @@
     "webpack-cli": "^6.0.1"
   },
   "dependencies": {
-    "@vscode/codicons": "^0.0.39"
+    "@vscode/codicons": "^0.0.39",
+    "p-limit": "^7.1.1"
   }
 }

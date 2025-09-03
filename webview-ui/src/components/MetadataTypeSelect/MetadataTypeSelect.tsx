@@ -1,7 +1,7 @@
 import ProgressRing from "../common/ProgressRing/ProgressRing";
 import type { MetadataType } from "../../types/metadata";
 import type { VscodeMultiSelect } from "@vscode-elements/elements/dist/vscode-multi-select";
-import type  { RefObject } from "react";
+import type { RefObject } from "react";
 import { useShadowEventDelegation } from "../../hooks/useShadowEventDelegation";
 import { vscode } from "../../utils/vscode";
 
@@ -9,20 +9,41 @@ interface Props {
   metadataTypes: MetadataType[];
   multiSelectRef: RefObject<VscodeMultiSelect | null>;
   fetching: boolean;
+  setFetching: React.Dispatch<React.SetStateAction<boolean>>;
+  setSelectedMetadataTypes: React.Dispatch<React.SetStateAction<Array<string>>>;
   selectedMetadataTypes: string[];
-  onSelectionChange: (newSelection: string[], selectedType?: string, deselectedType?: string) => void;
+  onSelectionChange: (
+    newSelection: string[],
+    selectedType?: string,
+    deselectedType?: string
+  ) => void;
 }
 
 function MetadataTypeSelect({
   metadataTypes,
   multiSelectRef,
   fetching,
+  setFetching,
   selectedMetadataTypes,
+  setSelectedMetadataTypes,
   onSelectionChange,
 }: Props) {
+  const refreshSelectedType = () => {
+    setFetching(true);
+    console.log("refreshSelectedType");
+    if (multiSelectRef.current) {
+      const selectedTypes = multiSelectRef.current.value;
+      vscode.postMessage({
+        command: "refreshSelectedMetadataList",
+        value: selectedTypes,
+      });
+    }
+  };
+
   const clearSelection = () => {
     if (multiSelectRef.current) {
       multiSelectRef.current.selectNone();
+      setSelectedMetadataTypes([]);
       vscode.postMessage({
         command: "loadMetadataComponents",
         type: "deselectAll",
@@ -30,6 +51,7 @@ function MetadataTypeSelect({
       });
     }
   };
+
   useShadowEventDelegation<VscodeMultiSelect>(
     multiSelectRef,
     "change",
@@ -37,7 +59,6 @@ function MetadataTypeSelect({
       const target = ev.target as HTMLSelectElement;
       const newSelection = [...target.value];
       const prevSelection = selectedMetadataTypes;
-
       if (prevSelection.length === newSelection.length) {
         return;
       }
@@ -48,7 +69,9 @@ function MetadataTypeSelect({
       if (newSelection.length > prevSelection.length) {
         selectedType = newSelection[newSelection.length - 1];
       } else {
-        deselectedType = prevSelection.find((item) => !newSelection.includes(item));
+        deselectedType = prevSelection.find(
+          (item) => !newSelection.includes(item)
+        );
       }
 
       onSelectionChange(newSelection, selectedType, deselectedType);
@@ -59,7 +82,7 @@ function MetadataTypeSelect({
     <div className="w-full px-2 pt-1 flex items-center gap-2">
       <vscode-multi-select
         ref={multiSelectRef}
-        key={metadataTypes.map(t => t.xmlName + t.selected).join(',')}
+        key={metadataTypes.map((t) => t.xmlName + t.selected).join(",")}
         className="flex-1"
         id="metadata-type-select"
         combobox
@@ -91,6 +114,7 @@ function MetadataTypeSelect({
           secondary
           icon="refresh"
           title="Refresh Components"
+          onClick={refreshSelectedType}
         ></vscode-button>
       )}
       {/* <vscode-button

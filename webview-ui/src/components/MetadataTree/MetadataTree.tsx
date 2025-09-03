@@ -1,6 +1,7 @@
 import { useEffect, type RefObject } from "react";
 import type { MetadataComponent, MetadataType } from "../../types/metadata";
 import type { VscodeTree } from "@vscode-elements/elements/dist/vscode-tree";
+import { vscode } from "../../utils/vscode";
 import { useShadowEventDelegation } from "../../hooks/useShadowEventDelegation";
 import { TreeItemTooltip } from "../common/TreeItemTooltip/TreeItemTooltip";
 import { useTooltip } from "../../hooks/useTooltip";
@@ -22,17 +23,22 @@ function MetadataTree({ metadataTypes, searchTerm, treeRef }: Props) {
       });
     }, [attach]);
     
-  const handleToolbarClick = (componentName: string) => {
-    console.log("clicked", componentName);
-    // TODO: dispatch download/retrieve
+  const handleDownload = (metadataType: string, componentName: string) => {
+    if(!metadataType || !componentName) return;
+    vscode.postMessage({
+      command: "retrieveMetadata",
+      type: metadataType,
+      value: componentName,
+    });
   };
   useShadowEventDelegation<HTMLButtonElement>(
     treeRef,
     "click",
     (button, ev) => {
       ev.stopPropagation();
+      const type = button.dataset.type ?? "";
       const name = button.dataset.component ?? "";
-      handleToolbarClick(name);
+      handleDownload(type, name);
     },
     "vscode-toolbar-button"
   );
@@ -79,6 +85,7 @@ function MetadataTree({ metadataTypes, searchTerm, treeRef }: Props) {
                     <span className="flex-1">{component.fullName}</span>
                     <vscode-toolbar-button
                       data-component={component.fullName}
+                      data-type={type.xmlName}
                       className={`
                         absolute right-2 opacity-0 group-hover:opacity-100 
                         transition-opacity duration-200

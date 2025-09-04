@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - main
-      
+
 permissions:
   contents: write       # allow creating tags and releases
   pull-requests: write  # allow creating PRs
@@ -27,6 +27,8 @@ jobs:
               {"type":"fix","section":"Bug Fixes","hidden":false},
               {"type":"chore","section":"Miscellaneous","hidden":true}
             ]
+        env:
+          GITHUB_TOKEN: ${{ secrets.RELEASE_PLEASE_TOKEN }}
 
   deploy:
     needs: release-please

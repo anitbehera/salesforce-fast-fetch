@@ -30,7 +30,6 @@ function MetadataTypeSelect({
 }: Props) {
   const refreshSelectedType = () => {
     setFetching(true);
-    console.log("refreshSelectedType");
     if (multiSelectRef.current) {
       const selectedTypes = multiSelectRef.current.value;
       vscode.postMessage({

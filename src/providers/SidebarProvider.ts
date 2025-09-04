@@ -40,13 +40,6 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
       });
     }
 
-    if (this.orgFolderUri) {
-      console.log(
-        "Org folder path available to sidebar:",
-        this.orgFolderUri.fsPath
-      );
-    }
-
     this._view = webviewView;
 
     webviewView.webview.options = {

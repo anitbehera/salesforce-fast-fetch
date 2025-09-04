@@ -4,6 +4,10 @@ on:
   push:
     branches:
       - main
+      
+permissions:
+  contents: write       # allow creating tags and releases
+  pull-requests: write  # allow creating PRs
 
 jobs:
   release-please:

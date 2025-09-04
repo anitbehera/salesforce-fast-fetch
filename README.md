@@ -2,6 +2,8 @@
 
 Salesforce Fast Fetch is a VSCode extension to search and download salesforce/omnistudio components with ease.
 
+![SF-Fast-Fetch](./media/fast_fetch_demo.gif)
+
 ## Prerequisites
 
 * [Install Salesfore CLI](https://developer.salesforce.com/docs/atlas.en-us.sfdx_setup.meta/sfdx_setup/sfdx_setup_install_cli.htm#sfdx_setup_install_cli)

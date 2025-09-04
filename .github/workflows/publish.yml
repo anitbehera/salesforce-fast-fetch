@@ -18,8 +18,16 @@ jobs:
         with:
           node-version: 20
 
-      - run: npm ci
+      # Install extension dependencies
+      - name: Install root dependencies
+        run: npm ci
 
+      # Install webview dependencies
+      - name: Install webview dependencies
+        working-directory: webview-ui
+        run: npm ci
+
+      # Install vsce CLI
       - run: npm install -g @vscode/vsce
 
       # Build the webview UI
@@ -33,7 +41,7 @@ jobs:
       # Publish to VS Code Marketplace
       - name: Publish to VS Code Marketplace
         run: vsce publish -p ${{ secrets.VSCE_TOKEN }}
-        
+
       # Create GitHub Release with auto-generated notes + attach VSIX
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2

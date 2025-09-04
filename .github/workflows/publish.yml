@@ -22,6 +22,10 @@ jobs:
 
       - run: npm install -g @vscode/vsce
 
+      # Build the webview UI
+      - name: Build Webview
+        run: npm run build:webview
+
       # Package the extension
       - name: Package Extension
         run: vsce package
@@ -29,3 +33,10 @@ jobs:
       # Publish to VS Code Marketplace
       - name: Publish to VS Code Marketplace
         run: vsce publish -p ${{ secrets.VSCE_TOKEN }}
+        
+      # Create GitHub Release with auto-generated notes + attach VSIX
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          generate_release_notes: true
+          files: "*.vsix"

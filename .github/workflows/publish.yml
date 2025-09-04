@@ -10,13 +10,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-      - run: npm ci
-      - uses: lannonbr/vsce-action@4.0.0
-        with:
-          args: "publish -p $VSCE_TOKEN"
-        env:
-          VSCE_TOKEN: ${{ secrets.VSCE_TOKEN }}
 
+      - run: npm ci
+
+      # Install vsce globally
+      - run: npm install -g @vscode/vsce
+
+      # Publish to the VS Code Marketplace
+      - name: Publish Extension
+        run: vsce publish -p ${{ secrets.VSCE_TOKEN }}

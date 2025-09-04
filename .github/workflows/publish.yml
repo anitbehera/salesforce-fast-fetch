@@ -1,37 +1,15 @@
-name: Release & Deploy Extension
+name: Publish VS Code Extension
 
 on:
   push:
-    branches:
-      - main
+    tags:
+      - 'v*.*.*'   # runs only when pushing tags like v1.2.3
 
 permissions:
-  contents: write       # allow creating tags and releases
-  pull-requests: write  # allow creating PRs
+  contents: write   # needed to create GitHub Release
 
 jobs:
-  release-please:
-    runs-on: ubuntu-latest
-    outputs:
-      release_created: ${{ steps.release.outputs.release_created }}
-    steps:
-      - id: release
-        uses: google-github-actions/release-please-action@v4
-        with:
-          release-type: node
-          package-name: vscode-extension
-          token: ${{ secrets.RELEASE_PLEASE_TOKEN }}
-          # ensures package.json, package-lock.json, and CHANGELOG.md get updated
-          changelog-types: |
-            [
-              {"type":"feat","section":"Features","hidden":false},
-              {"type":"fix","section":"Bug Fixes","hidden":false},
-              {"type":"chore","section":"Miscellaneous","hidden":true}
-            ]
-
-  deploy:
-    needs: release-please
-    if: ${{ needs.release-please.outputs.release_created }}
+  publish:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -42,19 +20,19 @@ jobs:
 
       - run: npm ci
 
-      # Install vsce globally
       - run: npm install -g @vscode/vsce
 
-      # Build/package extension
+      # Package the extension
       - name: Package Extension
         run: vsce package
 
-      # Publish to the VS Code Marketplace
-      - name: Publish Extension
+      # Publish to VS Code Marketplace
+      - name: Publish to VS Code Marketplace
         run: vsce publish -p ${{ secrets.VSCE_TOKEN }}
 
-      # Upload packaged .vsix to GitHub Release
-      - name: Upload VSIX to Release
+      # Create GitHub Release with auto-generated notes + attach VSIX
+      - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
+          generate_release_notes: true
           files: "*.vsix"

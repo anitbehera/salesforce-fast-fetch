@@ -2,6 +2,7 @@ import * as vscode from 'vscode';
 import { OrgInfo } from './orgInfo';
 import { MetadataService } from '../services/metadataService';
 import { MetadataType } from "../types/metadata";
+import { sortMetadataComponents } from "./common";
 
 export interface InitResult {
   orgFolderUri?: vscode.Uri;
@@ -39,7 +40,8 @@ export async function initializeWorkspace(): Promise<InitResult> {
         try {
           const fileUri = vscode.Uri.joinPath(targetFolderUri, `${mt.xmlName}.json`);
           const bytes = await vscode.workspace.fs.readFile(fileUri);
-          mt.components = JSON.parse(new TextDecoder().decode(bytes));
+          const components = JSON.parse(new TextDecoder().decode(bytes));
+          mt.components = sortMetadataComponents(components);
         } catch {
           console.warn(`No saved components file for ${mt.xmlName}`);
         }

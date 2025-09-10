@@ -1,7 +1,7 @@
 import * as vscode from "vscode";
 import { SalesforceCLIExecutor } from "../cli/commandExecutor";
 import { MetadataType, MetadataComponent } from "../types/metadata";
-
+import { sortMetadataComponents } from "../utils/common";
 export class MetadataService {
   /**
    * Get all available metadata types from the org
@@ -71,50 +71,54 @@ export class MetadataService {
    * List all components for a specific metadata type
    * and persist them to disk if orgFolderUri is provided
    */
-  public static async listMetadataComponents(
-    metadataType: string,
-    folder?: string,
-    orgFolderUri?: vscode.Uri
-  ): Promise<MetadataComponent[]> {
-    try {
-      const args = [
-        "org list metadata",
-        "--metadata-type",
-        metadataType,
-        "--json",
-      ];
+public static async listMetadataComponents(
+  metadataType: string,
+  folder?: string,
+  orgFolderUri?: vscode.Uri
+): Promise<MetadataComponent[]> {
+  try {
+    const args = [
+      "org list metadata",
+      "--metadata-type",
+      metadataType,
+      "--json",
+    ];
 
-      if (folder) args.push("--folder", folder);
+    if (folder) args.push("--folder", folder);
 
-      const result = await SalesforceCLIExecutor.executeSfCommand("", args);
+    const result = await SalesforceCLIExecutor.executeSfCommand("", args);
 
-      if (result.success) {
-        const output = JSON.parse(result.stdout);
-        const components: MetadataComponent[] = output.result || [];
+    if (result.success) {
+      const output = JSON.parse(result.stdout);
+      let components: MetadataComponent[] = output.result || [];
 
-        // Persist to disk if orgFolderUri is provided
-        if (orgFolderUri) {
-          const fileUri = vscode.Uri.joinPath(
-            orgFolderUri,
-            `${metadataType}.json`
-          );
-          await vscode.workspace.fs.writeFile(
-            fileUri,
-            new TextEncoder().encode(JSON.stringify(components, null, 2))
-          );
-        }
+      // Sort components using helper
+      components = sortMetadataComponents(components);
 
-        return components;
-      } else {
-        throw new Error(
-          `Failed to list components for ${metadataType}: ${result.stderr}`
+      // Persist to disk if orgFolderUri is provided
+      if (orgFolderUri) {
+        const fileUri = vscode.Uri.joinPath(
+          orgFolderUri,
+          `${metadataType}.json`
+        );
+        await vscode.workspace.fs.writeFile(
+          fileUri,
+          new TextEncoder().encode(JSON.stringify(components, null, 2))
         );
       }
-    } catch (error) {
-      console.error(`Error listing components for ${metadataType}:`, error);
-      return [];
+
+      return components;
+    } else {
+      throw new Error(
+        `Failed to list components for ${metadataType}: ${result.stderr}`
+      );
     }
+  } catch (error) {
+    console.error(`Error listing components for ${metadataType}:`, error);
+    return [];
   }
+}
+
 
   /**
    * Retrieve a single metadata component

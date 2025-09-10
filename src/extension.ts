@@ -17,12 +17,7 @@ export async function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(
     vscode.window.registerWebviewViewProvider(
       "salesforceFastFetch.sidebar",
-      sidebarProvider,
-      {
-        webviewOptions: {
-          retainContextWhenHidden: true, // Keep the webview alive when hidden
-        },
-      }
+      sidebarProvider
     )
   );
 

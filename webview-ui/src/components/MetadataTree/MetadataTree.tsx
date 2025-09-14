@@ -53,7 +53,7 @@ function MetadataTree({ metadataTypes, searchTerm, treeRef }: Props) {
               type.components?.filter((component) =>
                 component.fullName
                   .toLowerCase()
-                  .includes(searchTerm.toLowerCase())
+                  .includes(searchTerm.toLowerCase().replace(/\s+/g, ""))
               ) ?? [];
 
             return (

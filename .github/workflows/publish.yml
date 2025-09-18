@@ -27,8 +27,8 @@ jobs:
         working-directory: webview-ui
         run: npm ci
 
-      # Install vsce CLI
-      - run: npm install -g @vscode/vsce
+      # Install vsce + ovsx CLI
+      - run: npm install -g @vscode/vsce ovsx
 
       # Build the webview UI
       - name: Build Webview
@@ -41,6 +41,10 @@ jobs:
       # Publish to VS Code Marketplace
       - name: Publish to VS Code Marketplace
         run: vsce publish -p ${{ secrets.VSCE_TOKEN }}
+
+      # Publish to Open VSX
+      - name: Publish to Open VSX
+        run: ovsx publish -p ${{ secrets.OVSX_TOKEN }}
 
       # Create GitHub Release with auto-generated notes + attach VSIX
       - name: Create GitHub Release

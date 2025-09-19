@@ -22,6 +22,14 @@
   "categories": [
     "Other"
   ],
+  "keywords": [
+    "Salesforce Fast Fetch",
+    "Fast Fetch",
+    "Omnistudio Components",
+    "Salesforce Components",
+    "Salesforce Metadata",
+    "Salesforce CLI Integration"
+  ],
   "activationEvents": [],
   "main": "./dist/extension.js",
   "contributes": {

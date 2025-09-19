@@ -5,6 +5,8 @@ on:
     tags:
       - 'v*'  # runs only when pushing tags like v1.2.3
 
+workflow_dispatch: # allows manual triggering from GitHub UI
+
 permissions:
   contents: write   # needed to create GitHub Release
 

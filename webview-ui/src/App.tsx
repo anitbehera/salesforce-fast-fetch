@@ -17,10 +17,7 @@ import type { VscodeMultiSelect } from "@vscode-elements/elements/dist/vscode-mu
 import type { VscodeTree } from "@vscode-elements/elements/dist/vscode-tree";
 import type { MetadataType } from "./types/metadata";
 
-import MetadataTypeSelect from "./components/MetadataTypeSelect/MetadataTypeSelect";
-import SearchBar from "./components/SearchBar/SearchBar";
-import MetadataTree from "./components/MetadataTree/MetadataTree";
-import Initializing from "./components/common/Initializing/Initializing";
+import { MetadataTypeSelect, MetadataTree, SearchBar, Initializing } from './components';
 
 function App() {
   const [metadataTypes, setMetadataTypes] = useState<MetadataType[]>([]);

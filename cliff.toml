@@ -14,12 +14,22 @@ body = """
 conventional_commits = true
 filter_unconventional = true
 
-[git.commit_parsers]
-# Group "feat" commits under Features
-"^feat" = { group = "Features" }
-# Group "fix" commits under Bug Fixes
-"^fix" = { group = "Bug Fixes" }
-# Optional: group docs, chore, refactor, etc.
-"^docs" = { group = "Documentation" }
-"^chore" = { group = "Chores" }
-"^refactor" = { group = "Refactoring" }
+[[git.commit_parsers]]
+message = "^feat"
+group = "Features"
+
+[[git.commit_parsers]]
+message = "^fix"
+group = "Bug Fixes"
+
+[[git.commit_parsers]]
+message = "^docs"
+group = "Documentation"
+
+[[git.commit_parsers]]
+message = "^chore"
+group = "Chores"
+
+[[git.commit_parsers]]
+message = "^refactor"
+group = "Refactoring"

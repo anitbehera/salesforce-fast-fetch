@@ -210,16 +210,16 @@ export class MetadataService {
   public static async deleteMetadata(
     metadataType: string,
     componentName: string
-  ): Promise<boolean> {
+  ): Promise<any> {
     try {
       const result = await SalesforceCLIExecutor.executeSfCommand(
         "project delete source",
         ["--metadata", `${metadataType}:${componentName}`, "--no-prompt", "--json"]
       );
-      return result.success;
+      return result;
     } catch (error) {
       console.error(`Error deleting ${metadataType}:${componentName}:`, error);
-      return false;
+      return { success: false, error };
     }
   }
 }

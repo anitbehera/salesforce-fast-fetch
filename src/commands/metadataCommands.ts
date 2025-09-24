@@ -2,7 +2,7 @@ import * as vscode from "vscode";
 import { MetadataService } from "../services/metadataService";
 import { MetadataType, MetadataComponent } from "../types/metadata";
 import { SalesforceCLIExecutor } from "../cli/commandExecutor";
-//import { SalesforceOutputChannel } from '../utils/outputChannel';
+import { SalesforceOutputChannel } from '../utils/outputChannel';
 
 export class MetadataCommands {
   /**
@@ -11,7 +11,7 @@ export class MetadataCommands {
   public static async retrieveSingleComponent(
     component: MetadataComponent
   ): Promise<void> {
-    //const outputChannel = SalesforceOutputChannel.getInstance();
+    const outputChannel = SalesforceOutputChannel.getInstance();
 
     try {
       await vscode.window.withProgress(
@@ -24,35 +24,37 @@ export class MetadataCommands {
           progress.report({
             message: `${component.fullName} (${component.type})`,
           });
-
+          outputChannel.appendLine(`Retrieving: ${component.fullName} (${component.type})`);
           const success = await MetadataService.retrieveSingleComponent(
             component.type,
             component.fullName
           );
 
           if (success) {
-            const message = `Successfully retrieved: ${component.fullName} (${component.type})`;
+            const message = `✅ Successfully retrieved: ${component.fullName} (${component.type})`;
             vscode.window.showInformationMessage(message);
-            //outputChannel.appendLine(message);
+            outputChannel.appendLine(message);
           } else {
-            const errorMsg = `Failed to retrieve: ${component.fullName} (${component.type})`;
+            const errorMsg = `❌ Failed to retrieve: ${component.fullName} (${component.type})`;
             vscode.window.showErrorMessage(errorMsg);
-            //outputChannel.appendLine(errorMsg);
+            outputChannel.appendLine(errorMsg);
           }
         }
       );
     } catch (error) {
       const errorMsg = `Error retrieving component: ${error}`;
       vscode.window.showErrorMessage(errorMsg);
-      //outputChannel.appendLine(errorMsg);
+      outputChannel.appendLine(errorMsg);
     }
+    // Show the output channel once, after logging
+    outputChannel.show(true);
   }
 
   /**
    * Retrieve all components of a specific metadata type
    */
   public static async retrieveAllOfType(metadataType: string): Promise<void> {
-    //const outputChannel = SalesforceOutputChannel.getInstance();
+    const outputChannel = SalesforceOutputChannel.getInstance();
 
     try {
       await vscode.window.withProgress(
@@ -73,19 +75,22 @@ export class MetadataCommands {
           if (success) {
             const message = `✅ Successfully retrieved all ${metadataType} components`;
             vscode.window.showInformationMessage(message);
-            //outputChannel.appendLine(message);
+            outputChannel.appendLine(message);
           } else {
             const errorMsg = `❌ Failed to retrieve ${metadataType} components`;
             vscode.window.showErrorMessage(errorMsg);
-            //outputChannel.appendLine(errorMsg);
+            outputChannel.appendLine(errorMsg);
           }
         }
       );
     } catch (error) {
       const errorMsg = `Error retrieving metadata type: ${error}`;
       vscode.window.showErrorMessage(errorMsg);
-      //outputChannel.appendLine(errorMsg);
+      outputChannel.appendLine(errorMsg);
     }
+
+    // Show the output channel once, after logging
+    outputChannel.show(true);
   }
 
   /**
@@ -94,7 +99,7 @@ export class MetadataCommands {
   public static async retrieveSelectedComponents(
     components: MetadataComponent[]
   ): Promise<void> {
-    //const outputChannel = SalesforceOutputChannel.getInstance();
+    const outputChannel = SalesforceOutputChannel.getInstance();
 
     if (components.length === 0) {
       vscode.window.showWarningMessage("No components selected for retrieval");
@@ -125,20 +130,23 @@ export class MetadataCommands {
           if (success) {
             const message = `✅ Successfully retrieved ${components.length} components`;
             vscode.window.showInformationMessage(message);
-            //outputChannel.appendLine(message);
-            //outputChannel.appendLine(`Retrieved components: ${componentList}`);
+            outputChannel.appendLine(message);
+            outputChannel.appendLine(`Retrieved components: ${JSON.stringify(components, null, 2)}`);
           } else {
             const errorMsg = `❌ Failed to retrieve selected components`;
             vscode.window.showErrorMessage(errorMsg);
-            //outputChannel.appendLine(errorMsg);
+            outputChannel.appendLine(errorMsg);
           }
         }
       );
     } catch (error) {
       const errorMsg = `Error retrieving selected components: ${error}`;
       vscode.window.showErrorMessage(errorMsg);
-      //outputChannel.appendLine(errorMsg);
+      outputChannel.appendLine(errorMsg);
     }
+
+    // Show the output channel once, after logging
+    outputChannel.show(true);
   }
 
   /**
@@ -221,7 +229,7 @@ export class MetadataCommands {
    * Retrieve all metadata from org (dangerous - use with caution)
    */
   public static async retrieveAllMetadata(): Promise<void> {
-    //const outputChannel = SalesforceOutputChannel.getInstance();
+    const outputChannel = SalesforceOutputChannel.getInstance();
 
     const dangerConfirm = await vscode.window.showWarningMessage(
       "⚠️ WARNING: This will retrieve ALL metadata from your org.\n\nThis operation may take a very long time and download large amounts of data.\n\nOnly use this in development/sandbox orgs.",
@@ -252,25 +260,29 @@ export class MetadataCommands {
           if (result.success) {
             const message = "✅ Successfully retrieved all metadata";
             vscode.window.showInformationMessage(message);
-            //outputChannel.appendLine(message);
+            outputChannel.appendLine(message);
           } else {
             const errorMsg = "❌ Failed to retrieve all metadata";
             vscode.window.showErrorMessage(errorMsg);
-            //outputChannel.appendLine(errorMsg);
-            //outputChannel.appendLine(result.stderr);
+            outputChannel.appendLine(errorMsg);
+            outputChannel.appendLine(result.stderr);
           }
         }
       );
     } catch (error) {
       const errorMsg = `Error retrieving all metadata: ${error}`;
       vscode.window.showErrorMessage(errorMsg);
-      //outputChannel.appendLine(errorMsg);
+      outputChannel.appendLine(errorMsg);
     }
+
+    // Show the output channel once, after logging
+    outputChannel.show(true);
   }
 
   public static async deleteSingleComponent(
     component: MetadataComponent
   ): Promise<boolean> {
+    const outputChannel = SalesforceOutputChannel.getInstance();
     try {
       const confirm = await vscode.window.showWarningMessage(
         `Are you sure want to delete "${component.fullName}(${component.type})" from default Org and Local workspace ?`,
@@ -280,6 +292,7 @@ export class MetadataCommands {
       if (confirm !== "Yes, Delete") {
         return false;
       }
+      outputChannel.appendLine(`Deleting: ${component.fullName} (${component.type}).`);
 
       return await vscode.window.withProgress(
         {
@@ -288,25 +301,34 @@ export class MetadataCommands {
           cancellable: false,
         },
         async (progress) => {
-          const success = await MetadataService.deleteMetadata(
+          const result = await MetadataService.deleteMetadata(
             component.type,
             component.fullName
           );
 
-          if (success) {
-            vscode.window.showInformationMessage(
-              `🗑️ Successfully deleted: ${component.fullName} (${component.type}).`
-            );
+          // outputChannel.appendLine(JSON.stringify(result, null, 2));
+
+          if (result.success) {
+            const message = `Successfully deleted: ${component.fullName} (${component.type}).`;
+            outputChannel.appendLine(`✅ ${message}`);
+            vscode.window.showInformationMessage(`🗑️ ${message}`);
           } else {
+            const stdout = JSON.parse(result.stdout);
+            const errorDetail = stdout?.result.details.componentFailures[0].problem || 'Unknown error';
+            outputChannel.appendLine(`❌ Failed to delete: ${component.fullName} (${component.type}).`);
+            outputChannel.appendLine(errorDetail);
+            outputChannel.show(true);
             vscode.window.showErrorMessage(
               `Failed to delete: ${component.fullName} (${component.type}).`
             );
           }
 
-          return success;
+          return result.success;
         }
       );
     } catch (error) {
+      outputChannel.appendLine(`❌ Error deleting component: ${error}`);
+      outputChannel.show(true);
       vscode.window.showErrorMessage(`Error deleting component: ${error}`);
       return false;
     }

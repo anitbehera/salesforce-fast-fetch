@@ -1,27 +1,30 @@
-import * as vscode from 'vscode';
-import { MetadataService } from '../services/metadataService';
+import * as vscode from "vscode";
+import { MetadataService } from "../services/metadataService";
 import { MetadataType, MetadataComponent } from "../types/metadata";
-import { SalesforceCLIExecutor } from '../cli/commandExecutor';
+import { SalesforceCLIExecutor } from "../cli/commandExecutor";
 //import { SalesforceOutputChannel } from '../utils/outputChannel';
 
 export class MetadataCommands {
-  
   /**
    * Retrieve a single metadata component
    */
-  public static async retrieveSingleComponent(component: MetadataComponent): Promise<void> {
+  public static async retrieveSingleComponent(
+    component: MetadataComponent
+  ): Promise<void> {
     //const outputChannel = SalesforceOutputChannel.getInstance();
-    
+
     try {
       await vscode.window.withProgress(
         {
           location: vscode.ProgressLocation.Notification,
           title: `Retrieving`,
-          cancellable: false
+          cancellable: false,
         },
         async (progress) => {
-          progress.report({ message: `${component.fullName} (${component.type})` });
-          
+          progress.report({
+            message: `${component.fullName} (${component.type})`,
+          });
+
           const success = await MetadataService.retrieveSingleComponent(
             component.type,
             component.fullName
@@ -56,12 +59,16 @@ export class MetadataCommands {
         {
           location: vscode.ProgressLocation.Notification,
           title: `Retrieving all ${metadataType} components...`,
-          cancellable: false
+          cancellable: false,
         },
         async (progress) => {
-          progress.report({ message: `Fetching all ${metadataType} components from org...` });
-          
-          const success = await MetadataService.retrieveAllComponentsOfType(metadataType);
+          progress.report({
+            message: `Fetching all ${metadataType} components from org...`,
+          });
+
+          const success = await MetadataService.retrieveAllComponentsOfType(
+            metadataType
+          );
 
           if (success) {
             const message = `✅ Successfully retrieved all ${metadataType} components`;
@@ -84,11 +91,13 @@ export class MetadataCommands {
   /**
    * Retrieve selected components (multi-select)
    */
-  public static async retrieveSelectedComponents(components: MetadataComponent[]): Promise<void> {
+  public static async retrieveSelectedComponents(
+    components: MetadataComponent[]
+  ): Promise<void> {
     //const outputChannel = SalesforceOutputChannel.getInstance();
 
     if (components.length === 0) {
-      vscode.window.showWarningMessage('No components selected for retrieval');
+      vscode.window.showWarningMessage("No components selected for retrieval");
       return;
     }
 
@@ -97,14 +106,21 @@ export class MetadataCommands {
         {
           location: vscode.ProgressLocation.Notification,
           title: `Retrieving ${components.length} selected components...`,
-          cancellable: false
+          cancellable: false,
         },
         async (progress) => {
-          const componentMap = components.map(c => ({ type: c.type, name: c.fullName }));
-          
-          progress.report({ message: 'Fetching selected components from org...' });
-          
-          const success = await MetadataService.retrieveMultipleComponents(componentMap);
+          const componentMap = components.map((c) => ({
+            type: c.type,
+            name: c.fullName,
+          }));
+
+          progress.report({
+            message: "Fetching selected components from org...",
+          });
+
+          const success = await MetadataService.retrieveMultipleComponents(
+            componentMap
+          );
 
           if (success) {
             const message = `✅ Successfully retrieved ${components.length} components`;
@@ -132,16 +148,16 @@ export class MetadataCommands {
     try {
       // First, let user select metadata type
       const metadataTypes = await MetadataService.getAllMetadataTypes();
-      const typeOptions = metadataTypes.map(type => ({
+      const typeOptions = metadataTypes.map((type) => ({
         label: type.xmlName,
         description: type.directoryName,
-        detail: `Metadata Type: ${type.xmlName}`
+        detail: `Metadata Type: ${type.xmlName}`,
       }));
 
       const selectedType = await vscode.window.showQuickPick(typeOptions, {
-        placeHolder: 'Select metadata type to retrieve from',
+        placeHolder: "Select metadata type to retrieve from",
         matchOnDescription: true,
-        matchOnDetail: true
+        matchOnDetail: true,
       });
 
       if (!selectedType) {
@@ -153,41 +169,49 @@ export class MetadataCommands {
         {
           location: vscode.ProgressLocation.Notification,
           title: `Loading ${selectedType.label} components...`,
-          cancellable: true
+          cancellable: true,
         },
         async (progress, token) => {
-          return await MetadataService.listMetadataComponents(selectedType.label);
+          return await MetadataService.listMetadataComponents(
+            selectedType.label
+          );
         }
       );
 
       if (components.length === 0) {
-        vscode.window.showInformationMessage(`No ${selectedType.label} components found in org`);
+        vscode.window.showInformationMessage(
+          `No ${selectedType.label} components found in org`
+        );
         return;
       }
 
       // Let user select specific component(s)
-      const componentOptions = components.map(comp => ({
+      const componentOptions = components.map((comp) => ({
         label: comp.fullName,
         description: comp.type,
         detail: `Component: ${comp.fullName}`,
-        component: comp
+        component: comp,
       }));
 
-      const selectedComponents = await vscode.window.showQuickPick(componentOptions, {
-        placeHolder: `Select ${selectedType.label} component(s) to retrieve`,
-        canPickMany: true,
-        matchOnDescription: true,
-        matchOnDetail: true
-      });
+      const selectedComponents = await vscode.window.showQuickPick(
+        componentOptions,
+        {
+          placeHolder: `Select ${selectedType.label} component(s) to retrieve`,
+          canPickMany: true,
+          matchOnDescription: true,
+          matchOnDetail: true,
+        }
+      );
 
       if (!selectedComponents || selectedComponents.length === 0) {
         return;
       }
 
       // Retrieve selected components
-      const componentsToRetrieve = selectedComponents.map(item => item.component);
+      const componentsToRetrieve = selectedComponents.map(
+        (item) => item.component
+      );
       await this.retrieveSelectedComponents(componentsToRetrieve);
-
     } catch (error) {
       vscode.window.showErrorMessage(`Error in quick retrieve: ${error}`);
     }
@@ -200,13 +224,13 @@ export class MetadataCommands {
     //const outputChannel = SalesforceOutputChannel.getInstance();
 
     const dangerConfirm = await vscode.window.showWarningMessage(
-      '⚠️ WARNING: This will retrieve ALL metadata from your org.\n\nThis operation may take a very long time and download large amounts of data.\n\nOnly use this in development/sandbox orgs.',
+      "⚠️ WARNING: This will retrieve ALL metadata from your org.\n\nThis operation may take a very long time and download large amounts of data.\n\nOnly use this in development/sandbox orgs.",
       { modal: true },
-      'I Understand - Retrieve All',
-      'Cancel'
+      "I Understand - Retrieve All",
+      "Cancel"
     );
 
-    if (dangerConfirm !== 'I Understand - Retrieve All') {
+    if (dangerConfirm !== "I Understand - Retrieve All") {
       return;
     }
 
@@ -214,23 +238,23 @@ export class MetadataCommands {
       await vscode.window.withProgress(
         {
           location: vscode.ProgressLocation.Notification,
-          title: 'Retrieving ALL metadata from org...',
-          cancellable: false
+          title: "Retrieving ALL metadata from org...",
+          cancellable: false,
         },
         async (progress) => {
-          progress.report({ message: 'This may take several minutes...' });
-          
+          progress.report({ message: "This may take several minutes..." });
+
           const result = await SalesforceCLIExecutor.executeSfCommand(
-            'project retrieve start',
-            ['--manifest', 'manifest/package.xml', '--json']
+            "project retrieve start",
+            ["--manifest", "manifest/package.xml", "--json"]
           );
 
           if (result.success) {
-            const message = '✅ Successfully retrieved all metadata';
+            const message = "✅ Successfully retrieved all metadata";
             vscode.window.showInformationMessage(message);
             //outputChannel.appendLine(message);
           } else {
-            const errorMsg = '❌ Failed to retrieve all metadata';
+            const errorMsg = "❌ Failed to retrieve all metadata";
             vscode.window.showErrorMessage(errorMsg);
             //outputChannel.appendLine(errorMsg);
             //outputChannel.appendLine(result.stderr);
@@ -241,6 +265,50 @@ export class MetadataCommands {
       const errorMsg = `Error retrieving all metadata: ${error}`;
       vscode.window.showErrorMessage(errorMsg);
       //outputChannel.appendLine(errorMsg);
+    }
+  }
+
+  public static async deleteSingleComponent(
+    component: MetadataComponent
+  ): Promise<boolean> {
+    try {
+      const confirm = await vscode.window.showWarningMessage(
+        `Are you sure want to delete "${component.fullName}(${component.type})" from default Org and Local workspace ?`,
+        "Yes, Delete",
+        "Cancel"
+      );
+      if (confirm !== "Yes, Delete") {
+        return false;
+      }
+
+      return await vscode.window.withProgress(
+        {
+          location: vscode.ProgressLocation.Notification,
+          title: `Deleting: ${component.fullName} (${component.type}).`,
+          cancellable: false,
+        },
+        async (progress) => {
+          const success = await MetadataService.deleteMetadata(
+            component.type,
+            component.fullName
+          );
+
+          if (success) {
+            vscode.window.showInformationMessage(
+              `🗑️ Successfully deleted: ${component.fullName} (${component.type}).`
+            );
+          } else {
+            vscode.window.showErrorMessage(
+              `Failed to delete: ${component.fullName} (${component.type}).`
+            );
+          }
+
+          return success;
+        }
+      );
+    } catch (error) {
+      vscode.window.showErrorMessage(`Error deleting component: ${error}`);
+      return false;
     }
   }
 }

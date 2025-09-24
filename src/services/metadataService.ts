@@ -71,54 +71,53 @@ export class MetadataService {
    * List all components for a specific metadata type
    * and persist them to disk if orgFolderUri is provided
    */
-public static async listMetadataComponents(
-  metadataType: string,
-  folder?: string,
-  orgFolderUri?: vscode.Uri
-): Promise<MetadataComponent[]> {
-  try {
-    const args = [
-      "org list metadata",
-      "--metadata-type",
-      metadataType,
-      "--json",
-    ];
+  public static async listMetadataComponents(
+    metadataType: string,
+    folder?: string,
+    orgFolderUri?: vscode.Uri
+  ): Promise<MetadataComponent[]> {
+    try {
+      const args = [
+        "org list metadata",
+        "--metadata-type",
+        metadataType,
+        "--json",
+      ];
 
-    if (folder) args.push("--folder", folder);
+      if (folder) args.push("--folder", folder);
 
-    const result = await SalesforceCLIExecutor.executeSfCommand("", args);
+      const result = await SalesforceCLIExecutor.executeSfCommand("", args);
 
-    if (result.success) {
-      const output = JSON.parse(result.stdout);
-      let components: MetadataComponent[] = output.result || [];
+      if (result.success) {
+        const output = JSON.parse(result.stdout);
+        let components: MetadataComponent[] = output.result || [];
 
-      // Sort components using helper
-      components = sortMetadataComponents(components);
+        // Sort components using helper
+        components = sortMetadataComponents(components);
 
-      // Persist to disk if orgFolderUri is provided
-      if (orgFolderUri) {
-        const fileUri = vscode.Uri.joinPath(
-          orgFolderUri,
-          `${metadataType}.json`
-        );
-        await vscode.workspace.fs.writeFile(
-          fileUri,
-          new TextEncoder().encode(JSON.stringify(components, null, 2))
+        // Persist to disk if orgFolderUri is provided
+        if (orgFolderUri) {
+          const fileUri = vscode.Uri.joinPath(
+            orgFolderUri,
+            `${metadataType}.json`
+          );
+          await vscode.workspace.fs.writeFile(
+            fileUri,
+            new TextEncoder().encode(JSON.stringify(components, null, 2))
+          );
+        }
+
+        return components;
+      } else {
+        throw new Error(
+          `Failed to list components for ${metadataType}: ${result.stderr}`
         );
       }
-
-      return components;
-    } else {
-      throw new Error(
-        `Failed to list components for ${metadataType}: ${result.stderr}`
-      );
+    } catch (error) {
+      console.error(`Error listing components for ${metadataType}:`, error);
+      return [];
     }
-  } catch (error) {
-    console.error(`Error listing components for ${metadataType}:`, error);
-    return [];
   }
-}
-
 
   /**
    * Retrieve a single metadata component
@@ -203,5 +202,24 @@ public static async listMetadataComponents(
       console.error(`Error fetching folders for ${metadataType}:`, error);
     }
     return [];
+  }
+
+  /**
+   * Delete a specific metadata component
+   */
+  public static async deleteMetadata(
+    metadataType: string,
+    componentName: string
+  ): Promise<boolean> {
+    try {
+      const result = await SalesforceCLIExecutor.executeSfCommand(
+        "project delete source",
+        ["--metadata", `${metadataType}:${componentName}`, "--no-prompt", "--json"]
+      );
+      return result.success;
+    } catch (error) {
+      console.error(`Error deleting ${metadataType}:${componentName}:`, error);
+      return false;
+    }
   }
 }

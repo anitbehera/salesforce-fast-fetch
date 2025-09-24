@@ -23,10 +23,10 @@ function MetadataTree({ metadataTypes, searchTerm, treeRef }: Props) {
       });
     }, [attach]);
     
-  const handleDownload = (metadataType: string, componentName: string) => {
+  const handleAction = (action: string, metadataType: string, componentName: string) => {
     if(!metadataType || !componentName) return;
     vscode.postMessage({
-      command: "retrieveMetadata",
+      command: action === "delete" ? "deleteMetadata" : "retrieveMetadata",
       type: metadataType,
       value: componentName,
     });
@@ -38,7 +38,8 @@ function MetadataTree({ metadataTypes, searchTerm, treeRef }: Props) {
       ev.stopPropagation();
       const type = button.dataset.type ?? "";
       const name = button.dataset.component ?? "";
-      handleDownload(type, name);
+      const action = button.dataset.action ?? "";
+      handleAction(action, type, name);
     },
     "vscode-toolbar-button"
   );
@@ -86,6 +87,19 @@ function MetadataTree({ metadataTypes, searchTerm, treeRef }: Props) {
                     <vscode-toolbar-button
                       data-component={component.fullName}
                       data-type={type.xmlName}
+                      data-action="delete"
+                      className={`
+                        absolute right-8 opacity-0 group-hover:opacity-100 
+                        transition-opacity duration-200
+                      `}
+                      icon="trash"
+                      label="Delete Component"
+                    ></vscode-toolbar-button>
+
+                    <vscode-toolbar-button
+                      data-component={component.fullName}
+                      data-type={type.xmlName}
+                      data-action="download"
                       className={`
                         absolute right-2 opacity-0 group-hover:opacity-100 
                         transition-opacity duration-200

@@ -68,6 +68,10 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
           this.handleRetrieveSingleComponent(data);
           break;
         }
+        case "deleteMetadata": {
+          this.handleDeleteMetadata(data);
+          break;
+        }
       }
     });
   }
@@ -105,6 +109,45 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
       });
     }
   }
+
+private async handleDeleteMetadata(data: { type: string; value: string }) {
+  const component = { type: data.type, fullName: data.value };
+
+  const success = await MetadataCommands.deleteSingleComponent(component);
+
+  if (success) {
+    // Find the metadata type
+    const typeIdx = this.metadataTypes.findIndex(mt => mt.xmlName === data.type);
+    if (typeIdx >= 0 && this.metadataTypes[typeIdx].components) {
+      // Remove the deleted component
+      this.metadataTypes[typeIdx].components = this.metadataTypes[typeIdx].components?.filter(
+        (c) => c.fullName !== component.fullName
+      );
+
+      // Persist updated list to <metadataType>.json
+      if (this.orgFolderUri) {
+        const fileUri = vscode.Uri.joinPath(
+          this.orgFolderUri,
+          `${data.type}.json`
+        );
+        await vscode.workspace.fs.writeFile(
+          fileUri,
+          new TextEncoder().encode(
+            JSON.stringify(this.metadataTypes[typeIdx].components, null, 2)
+          )
+        );
+      }
+    }
+
+    // Update sidebar view
+    this.sendMessageToWebview({
+      type: "metadataTypes",
+      metadataTypes: this.metadataTypes,
+    });
+  }
+}
+
+
 
   private handleRetrieveSingleComponent(data: { type: string; value: string }) {
     MetadataCommands.retrieveSingleComponent({

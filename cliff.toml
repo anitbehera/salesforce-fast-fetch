@@ -1,0 +1,24 @@
+[changelog]
+header = "# Changelog\n\n"
+body = """
+## {{ version | default(value="Unreleased") }} - {{ timestamp | date(format="%Y-%m-%d") }}
+
+{% for group, commits in commits | group_by(attribute="group") %}
+### {{ group | upper_first }}
+{% for commit in commits %}
+- {{ commit.message | trim }} ([{{ commit.id | truncate(length=7) }}]({{ commit.link }}))
+{% endfor %}
+{% endfor %}
+"""
+
+footer = "\n"
+
+[git]
+conventional_commits = true
+filter_unconventional = true
+
+# Only include these types
+commit_parsers = [
+  { message = "^feat", group = "Features" },
+  { message = "^fix", group = "Bug Fixes" }
+]

@@ -1,24 +1,25 @@
 [changelog]
 header = "# Changelog\n\n"
 body = """
-## {{ version | default(value="Unreleased") }} - {{ timestamp | date(format="%Y-%m-%d") }}
-
+{% if version %}## {{ version }} - {{ timestamp | date("%Y-%m-%d") }}{% endif %}
 {% for group, commits in commits | group_by(attribute="group") %}
 ### {{ group | upper_first }}
 {% for commit in commits %}
-- {{ commit.message | trim }} ([{{ commit.id | truncate(length=7) }}]({{ commit.link }}))
+- {{ commit.message | upper_first }} ({{ commit.id | truncate(length=7) }})
 {% endfor %}
 {% endfor %}
 """
-
-footer = "\n"
 
 [git]
 conventional_commits = true
 filter_unconventional = true
 
-# Only include these types
-commit_parsers = [
-  { message = "^feat", group = "Features" },
-  { message = "^fix", group = "Bug Fixes" }
-]
+[git.commit_parsers]
+# Group "feat" commits under Features
+"^feat" = { group = "Features" }
+# Group "fix" commits under Bug Fixes
+"^fix" = { group = "Bug Fixes" }
+# Optional: group docs, chore, refactor, etc.
+"^docs" = { group = "Documentation" }
+"^chore" = { group = "Chores" }
+"^refactor" = { group = "Refactoring" }

@@ -1,3 +1,9 @@
+## What's Changed in 1.0.7
+* 1.0.7 by @anitbehera
+* fix: update workflow by @anitbehera
+
+**Full Changelog**: https://github.com/anitbehera/salesforce-fast-fetch/compare/v1.0.6...v1.0.7
+
 # Change Log
 
 All notable changes to the "salesforce-fast-fetch" extension will be documented in this file.

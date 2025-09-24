@@ -2,6 +2,13 @@
 
 Salesforce Fast Fetch is a VSCode extension to search and download salesforce/omnistudio components with ease.
 
+### Features
+
+* Search Salesforce/Omnistudio Metadata with ease(Better UX than SF Org Browser).
+* Download Metadata to Local workspace.
+* Check who has modified/created the Metadata.
+* Delete Meatadata with ease.
+
 ![SF-Fast-Fetch](./media/fast_fetch_demo.gif)
 
 ## Prerequisites

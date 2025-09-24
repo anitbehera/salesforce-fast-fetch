@@ -1,6 +1,6 @@
 # Salesforce Fast Fetch for Visual Studio Code
 
-Salesforce Fast Fetch is a VSCode extension to search and download salesforce/omnistudio components with ease.
+Salesforce Fast Fetch is a VSCode extension to search, download or delete salesforce/omnistudio components with ease.
 
 ### Features
 

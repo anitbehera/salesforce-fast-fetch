@@ -311,6 +311,7 @@ export class MetadataCommands {
           if (result.success) {
             const message = `Successfully deleted: ${component.fullName} (${component.type}).`;
             outputChannel.appendLine(`✅ ${message}`);
+            outputChannel.show(true);
             vscode.window.showInformationMessage(`🗑️ ${message}`);
           } else {
             const stdout = JSON.parse(result.stdout);

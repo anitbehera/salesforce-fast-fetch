@@ -29,7 +29,7 @@ jobs:
         uses: orhun/git-cliff-action@v4
         with:
           config: cliff.toml
-          args: --tag ${{ github.ref_name }} --prepend CHANGELOG.md
+          args: --tag ${{ github.ref_name }} -l --prepend CHANGELOG.md
 
       # Commit updated CHANGELOG.md
       - name: Commit Changelog
@@ -45,7 +45,7 @@ jobs:
         uses: orhun/git-cliff-action@v4
         with:
           config: cliff.toml
-          args: --tag ${{ github.ref_name }} --output RELEASE_NOTES.md
+          args: --tag ${{ github.ref_name }} -l --output RELEASE_NOTES.md
 
       # Install webview dependencies
       - name: Install webview dependencies

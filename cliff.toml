@@ -1,7 +1,7 @@
 [changelog]
 header = "# Changelog\n\n"
 body = """
-{% if version %}## {{ version }} - {{ timestamp | date("%Y-%m-%d") }}{% endif %}
+{% if version %}## {{ version }} - {{ timestamp | date(%Y-%m-%d) }}{% endif %}
 {% for group, commits in commits | group_by(attribute="group") %}
 ### {{ group | upper_first }}
 {% for commit in commits %}
@@ -21,15 +21,3 @@ group = "Features"
 [[git.commit_parsers]]
 message = "^fix"
 group = "Bug Fixes"
-
-[[git.commit_parsers]]
-message = "^docs"
-group = "Documentation"
-
-[[git.commit_parsers]]
-message = "^chore"
-group = "Chores"
-
-[[git.commit_parsers]]
-message = "^refactor"
-group = "Refactoring"

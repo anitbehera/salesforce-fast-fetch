@@ -306,15 +306,19 @@ export class MetadataCommands {
             component.fullName
           );
 
-          // outputChannel.appendLine(JSON.stringify(result, null, 2));
+          const stdout = JSON.parse(result.stdout);
 
           if (result.success) {
             const message = `Successfully deleted: ${component.fullName} (${component.type}).`;
+            if (stdout?.warnings && stdout.warnings.length > 0) {
+              stdout.warnings.forEach((warning: string) => {
+                outputChannel.appendLine(`⚠️ Warning: ${warning}.`);
+              });
+            }
             outputChannel.appendLine(`✅ ${message}`);
             outputChannel.show(true);
             vscode.window.showInformationMessage(`🗑️ ${message}`);
           } else {
-            const stdout = JSON.parse(result.stdout);
             const errorDetail = stdout?.result.details.componentFailures[0].problem || 'Unknown error';
             outputChannel.appendLine(`❌ Failed to delete: ${component.fullName} (${component.type}).`);
             outputChannel.appendLine(errorDetail);

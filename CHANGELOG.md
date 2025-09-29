@@ -1,3 +1,8 @@
+## What's Changed in 1.0.9
+* feat: display warnings on output channel if present by @anitbehera
+
+**Full Changelog**: https://github.com/anitbehera/salesforce-fast-fetch/compare/v1.0.8...v1.0.9
+
 ## What's Changed in 1.0.8
 * 1.0.8 by @anitbehera
 * fix: Show output Logs on successful deletion by @anitbehera

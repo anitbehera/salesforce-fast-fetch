@@ -1,7 +1,7 @@
 {
   "name": "salesforce-fast-fetch",
   "displayName": "Salesforce Fast Fetch",
-  "description": "Search and download Salesforce & Omnistudio components with ease!",
+  "description": "Search, download or delete Salesforce & Omnistudio components with ease!",
   "bugs": {
     "url": "https://github.com/anitbehera/salesforce-fast-fetch/issues"
   },
